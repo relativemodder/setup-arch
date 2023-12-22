@@ -52,7 +52,7 @@ endgroup() {
 }
 
 output() {
-    local $variable="$1"
+    local variable="$1"
     shift
 
     printf "%s=$s\n" "$variable" "$*" >> "$GITHUB_OUTPUT"
