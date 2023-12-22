@@ -114,19 +114,6 @@ write() {
     endgroup
 }
 
-## Mount a directory as a bind mount.
-##
-## $1: Path to the directory to mount
-## $2: Path to mount the directory to
-bind() {
-    local source="$1"
-    local target="$2"
-
-    group "Mounting $source to $target..."
-    sudo mount --make-rslave --rbind "$source" "$target" 2>&1
-    endgroup
-}
-
 ## Run a command in the chroot environment.
 ##
 ## $1: Command to run
@@ -134,7 +121,7 @@ run() {
     local cmd="$1"
 
     group "Running $cmd..."
-    sudo chroot "$ARCH_ROOTFS_DIR" /bin/bash -c "$cmd" 2>&1
+    sudo "$ARCH_ROOTFS_DIR/bin/arch-chroot" "$ARCH_ROOTFS_DIR" /bin/bash -c "$cmd" 2>&1
     endgroup
 }
 
@@ -151,12 +138,6 @@ verify "archlinux-bootstrap-x86_64.tar.gz" "archlinux-bootstrap-x86_64.tar.gz.si
 
 # Extract the tarball
 extract "archlinux-bootstrap-x86_64.tar.gz" "$RUNNER_HOME"
-
-# Mount the necessary directories
-bind /dev "$ARCH_ROOTFS_DIR/dev"
-bind /sys "$ARCH_ROOTFS_DIR/sys"
-bind /run "$ARCH_ROOTFS_DIR/run"
-sudo mount -t proc none "$ARCH_ROOTFS_DIR/proc"
 
 # Populate the mirror list
 write "$ARCH_ROOTFS_DIR/etc/pacman.d/mirrorlist" "Server = $INPUT_ARCH_MIRROR/\$repo/os/\$arch"
