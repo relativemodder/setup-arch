@@ -1,0 +1,41 @@
+name: Test this action
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      THIS_ENV_SHOULD_EXPORT: exported
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Arch Linux using this action
+        uses: ./
+
+      - name: Output chroot information
+        run: |
+          whoami
+          uname -a
+          cat /etc/os-release
+          env
+        shell: arch.sh {0}
+
+      - name: Test if the default working directory is the workspace
+        run: |
+          test "$(pwd)" = "${{ github.workspace }}"
+        shell: arch.sh {0}
+
+      - name: Test if the default environment variable is exported
+        run: |
+          echo "${GITHUB_WORKSPACE}"
+          test "${GITHUB_WORKSPACE}" = "${{ github.workspace }}"
+        shell: arch.sh {0}
+
+      - name: Test if the job environment variable is exported
+        run: |
+          echo "${THIS_ENV_SHOULD_EXPORT}"
+          test "${THIS_ENV_SHOULD_EXPORT}" = "exported"
+        shell: arch.sh {0}
