@@ -15,6 +15,9 @@ set -euo pipefail
 
 ## Constants
 ####################################################################################################
+readonly WHAT_I_AM="$(readlink -f "$0")"
+readonly WHERE_I_AM="$(cd "$(dirname "$0")" && pwd)"
+
 readonly RUNNER_HOME="/home/$SUDO_USER"
 readonly ARCH_ROOTFS_DIR="$RUNNER_HOME/root.x86_64"
 
@@ -58,6 +61,10 @@ output() {
     printf "%s=%s\n" "$variable" "$*" >> "$GITHUB_OUTPUT"
 }
 
+path() {
+    printf "%s\n" "$*" >> "$GITHUB_PATH"
+}
+
 
 ## Helper functions
 ####################################################################################################
@@ -71,7 +78,7 @@ download() {
     local path="$2"
 
     group "Downloading $url..."
-    curl -sSL -o "$path" "$url" 2>&1
+    curl -vsSL -o "$path" "$url" 2>&1
     endgroup
 }
 
@@ -97,7 +104,7 @@ extract() {
     local path="$2"
 
     group "Extracting $tarball..."
-    tar xzf "$tarball" -C "$path" --numeric-owner 2>&1
+    tar xzvf "$tarball" -C "$path" --numeric-owner 2>&1
     endgroup
 }
 
@@ -139,6 +146,9 @@ verify "archlinux-bootstrap-x86_64.tar.gz" "archlinux-bootstrap-x86_64.tar.gz.si
 # Extract the tarball
 extract "archlinux-bootstrap-x86_64.tar.gz" "$RUNNER_HOME"
 
+# Copy the action script
+sudo install -Dvm755 "$WHERE_I_AM/arch.sh" "$ARCH_ROOTFS_DIR/bounce"
+
 # Populate the mirror list
 write "$ARCH_ROOTFS_DIR/etc/pacman.d/mirrorlist" "Server = $INPUT_ARCH_MIRROR/\$repo/os/\$arch"
 
@@ -164,3 +174,4 @@ rm -rf "archlinux-bootstrap-x86_64.tar.gz" "archlinux-bootstrap-x86_64.tar.gz.si
 
 # Output the path to the rootfs directory
 output root-path "$ARCH_ROOTFS_DIR"
+path "$ARCH_ROOTFS_DIR/bounce"
