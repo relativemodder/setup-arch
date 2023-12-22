@@ -145,6 +145,7 @@ write "$ARCH_ROOTFS_DIR/etc/pacman.d/mirrorlist" "Server = $INPUT_ARCH_MIRROR/\$
 # Install essential packages (base-devel)
 run "pacman-key --init"
 run "pacman-key --populate archlinux"
+run "sed -i 's/CheckSpace/#CheckSpace/' /etc/pacman.conf"
 run "pacman -Syu --noconfirm --needed base-devel"
 
 # Install additional packages if specified
