@@ -78,7 +78,7 @@ download() {
     local path="$2"
 
     group "Downloading $url..."
-    curl -vsSL -o "$path" "$url" 2>&1
+    curl -sSL -o "$path" "$url" 2>&1
     endgroup
 }
 
@@ -104,7 +104,7 @@ extract() {
     local path="$2"
 
     group "Extracting $tarball..."
-    tar xzvf "$tarball" -C "$path" --numeric-owner 2>&1
+    tar xzf "$tarball" -C "$path" --numeric-owner 2>&1
     endgroup
 }
 
@@ -147,7 +147,7 @@ verify "archlinux-bootstrap-x86_64.tar.gz" "archlinux-bootstrap-x86_64.tar.gz.si
 extract "archlinux-bootstrap-x86_64.tar.gz" "$RUNNER_HOME"
 
 # Copy the action script
-sudo install -Dvm755 "$WHERE_I_AM/arch.sh" "$ARCH_ROOTFS_DIR/bounce"
+sudo install -Dvm755 "$WHERE_I_AM/arch.sh" "$ARCH_ROOTFS_DIR/bounce/arch.sh"
 
 # Populate the mirror list
 write "$ARCH_ROOTFS_DIR/etc/pacman.d/mirrorlist" "Server = $INPUT_ARCH_MIRROR/\$repo/os/\$arch"
