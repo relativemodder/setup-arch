@@ -55,7 +55,7 @@ output() {
     local variable="$1"
     shift
 
-    printf "%s=$s\n" "$variable" "$*" >> "$GITHUB_OUTPUT"
+    printf "%s=%s\n" "$variable" "$*" >> "$GITHUB_OUTPUT"
 }
 
 
