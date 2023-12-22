@@ -157,7 +157,7 @@ fi
 run "useradd -m -G wheel -s /bin/bash $SUDO_USER"
 
 # Set up sudo
-run "sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers"
+run "echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"
 
 # Clean up
 rm -rf "archlinux-bootstrap-x86_64.tar.gz" "archlinux-bootstrap-x86_64.tar.gz.sig"
