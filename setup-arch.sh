@@ -121,6 +121,21 @@ write() {
     endgroup
 }
 
+## Bind mount a directory.
+##
+## $1: Path to the directory to bind mount
+## $2: Path to bind mount the directory to
+bind_mount() {
+    local source="$1"
+    local target="$2"
+
+    group "Bind mounting $source to $target..."
+    sudo mkdir -p "$target"
+    sudo mount -v --rbind "$source" "$target" 2>&1
+    sudo mount --make-rprivate "$target" 2>&1
+    endgroup
+}
+
 ## Run a command in the chroot environment.
 ##
 ## $1: Command to run
@@ -165,6 +180,9 @@ fi
 
 # Set up the user
 run "useradd -m -G wheel -s /bin/bash $SUDO_USER"
+
+# Set up the working directory
+bind_mount "$RUNNER_HOME" "$ARCH_ROOTFS_DIR/$RUNNER_HOME"
 
 # Set up sudo
 run "echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"

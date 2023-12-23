@@ -8,9 +8,10 @@ case "$1" in
 esac
 
 rootfs=$(cd "$(dirname "$0")"/.. && pwd)
-export | sudo tee "$rootfs/bounce/env.sh" >/dev/null
+oldpwd=$(pwd)
+export | sudo tee "$rootfs/tmp/.env.sh" >/dev/null
 
 exec sudo "$rootfs/bin/arch-chroot" "$rootfs" \
 	/bin/su "$user" \
-		/bin/sh -lc ". /bounce/env.sh; cd '$GITHUB_WORKSPACE' 2>/dev/null; exec \"\$@\"" -- \
+		/bin/sh -lc ". /tmp/.env.sh; cd '$oldpwd' 2>/dev/null; exec \"\$@\"" -- \
 			/bin/sh -eo pipefail "$@"
