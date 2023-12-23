@@ -117,7 +117,7 @@ write() {
     local content="$2"
 
     group "Writing to $path..."
-    echo "$content" | sudo tee "$path" 2>&1
+    echo "$content" > "$path"
     endgroup
 }
 
@@ -130,9 +130,8 @@ bind_mount() {
     local target="$2"
 
     group "Bind mounting $source to $target..."
-    sudo mkdir -p "$target"
-    sudo mount -v --rbind "$source" "$target" 2>&1
-    sudo mount --make-rprivate "$target" 2>&1
+    mkdir -p "$target"
+    mount -v --rbind "$source" "$target" 2>&1
     endgroup
 }
 
@@ -143,7 +142,7 @@ run() {
     local cmd="$1"
 
     group "Running $cmd..."
-    sudo "$ARCH_ROOTFS_DIR/bin/arch-chroot" "$ARCH_ROOTFS_DIR" /bin/bash -c "$cmd" 2>&1
+    "$ARCH_ROOTFS_DIR/bin/arch-chroot" "$ARCH_ROOTFS_DIR" /bin/bash -c "$cmd" 2>&1
     endgroup
 }
 
@@ -162,7 +161,7 @@ verify "archlinux-bootstrap-x86_64.tar.gz" "archlinux-bootstrap-x86_64.tar.gz.si
 extract "archlinux-bootstrap-x86_64.tar.gz" "$RUNNER_HOME"
 
 # Copy the action script
-sudo install -Dvm755 "$WHERE_I_AM/arch.sh" "$ARCH_ROOTFS_DIR/bounce/arch.sh"
+install -Dvm755 "$WHERE_I_AM/arch.sh" "$ARCH_ROOTFS_DIR/bounce/arch.sh"
 
 # Populate the mirror list
 write "$ARCH_ROOTFS_DIR/etc/pacman.d/mirrorlist" "Server = $INPUT_ARCH_MIRROR/\$repo/os/\$arch"
@@ -179,7 +178,8 @@ if [ -n "$INPUT_ARCH_PACKAGES" ]; then
 fi
 
 # Set up the user
-run "useradd -m -G wheel -s /bin/bash $SUDO_USER"
+_UID="$(id -u "$SUDO_USER")"
+run "useradd -u $_UID -G wheel -s /bin/bash $SUDO_USER"
 
 # Set up the working directory
 bind_mount "$RUNNER_HOME" "$ARCH_ROOTFS_DIR/$RUNNER_HOME"
