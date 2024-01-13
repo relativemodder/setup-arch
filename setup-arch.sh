@@ -160,6 +160,9 @@ verify "archlinux-bootstrap-x86_64.tar.gz" "archlinux-bootstrap-x86_64.tar.gz.si
 # Extract the tarball
 extract "archlinux-bootstrap-x86_64.tar.gz" "$RUNNER_HOME"
 
+# Bind mount rootfs to itself
+bind_mount "$ARCH_ROOTFS_DIR" "$ARCH_ROOTFS_DIR"
+
 # Copy the action script
 install -Dvm755 "$WHERE_I_AM/arch.sh" "$ARCH_ROOTFS_DIR/bounce/arch.sh"
 
