@@ -17,10 +17,10 @@ jobs:
 
       - name: Output chroot information
         run: |
-          whoami
-          uname -a
-          cat /etc/os-release
-          env
+          printf "I am: %s\n" "$(whoami)"
+          printf "Uname: %s\n" "$(uname -a)"
+          printf "::group::OS Information\n%s\n::endgroup::\n" "$(cat /etc/os-release)"
+          printf "::group::Environment Variables\n%s\n::endgroup::" "$(env)"
         shell: arch.sh {0}
 
       - name: Test if the default working directory is the workspace
@@ -30,12 +30,19 @@ jobs:
 
       - name: Test if the default environment variable is exported
         run: |
-          echo "${GITHUB_WORKSPACE}"
+          echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
           test "${GITHUB_WORKSPACE}" = "${{ github.workspace }}"
         shell: arch.sh {0}
 
       - name: Test if the job environment variable is exported
         run: |
-          echo "${THIS_ENV_SHOULD_EXPORT}"
+          echo "THIS_ENV_SHOULD_EXPORT=${THIS_ENV_SHOULD_EXPORT}"
           test "${THIS_ENV_SHOULD_EXPORT}" = "exported"
+        shell: arch.sh {0}
+
+      - name: Test if a package can be installed and run
+        run: |
+          sudo pacman -Syu
+          sudo pacman -S --noconfirm cowsay
+          cowsay "Hello, world!"
         shell: arch.sh {0}
