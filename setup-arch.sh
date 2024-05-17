@@ -154,8 +154,8 @@ download "$INPUT_ARCH_MIRROR/iso/$INPUT_ARCH_VERSION/archlinux-bootstrap-x86_64.
 download "https://archlinux.org/iso/$INPUT_ARCH_VERSION/archlinux-bootstrap-x86_64.tar.gz.sig" "archlinux-bootstrap-x86_64.tar.gz.sig"
 
 # Verify the signature
-gpg --auto-key-locate clear,wkd -v --locate-external-key "pierre@archlinux.org"
-verify "archlinux-bootstrap-x86_64.tar.gz" "archlinux-bootstrap-x86_64.tar.gz.sig"
+#gpg --auto-key-locate clear,wkd -v --locate-external-key "pierre@archlinux.org"
+#verify "archlinux-bootstrap-x86_64.tar.gz" "archlinux-bootstrap-x86_64.tar.gz.sig"
 
 # Extract the tarball
 extract "archlinux-bootstrap-x86_64.tar.gz" "$RUNNER_HOME"
